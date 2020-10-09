@@ -1036,7 +1036,10 @@ class ArticleImporter
         $columns = '';
         if (!empty($article['articleattributesID'])) {
             foreach ($article['attr'] as $key => $value) {
-                $values .= ", $key = $value";
+                if (!empty($values)) {
+                    $values .= ', ';
+                }
+                $values .= "$key = $value";
             }
 
             if ($values === '') {
@@ -1053,13 +1056,9 @@ class ArticleImporter
                 $values = ', ' . implode(', ', $article['attr']);
             }
 
-            if ($values === '') {
-                return $article;
-            }
-
-            $sql = "INSERT INTO s_articles_attributes
+            $sql = "INSERT INTO s_articles_attributes 
                     (articledetailsID $columns) VALUES
-                    ({$article['articleID']}, {$article['articledetailsID']} $values)";
+                    ({$article['articledetailsID']} $values)";
 
             $this->db->query($sql);
             $article['articleattributesID'] = $this->db->lastInsertId();
